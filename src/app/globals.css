@@ -1,0 +1,346 @@
+@import "tailwindcss";
+
+/* ---- Haffer (site typeface, self-hosted) ---- */
+@font-face { font-family: Haffer; font-weight: 100; font-display: swap; src: url("/sunitajesh/fonts/HafferThin.woff2") format("woff2"); }
+@font-face { font-family: Haffer; font-weight: 430; font-display: swap; src: url("/sunitajesh/fonts/HafferRegular.woff2") format("woff2"); }
+@font-face { font-family: Haffer; font-weight: 570; font-display: swap; src: url("/sunitajesh/fonts/HafferMedium.woff2") format("woff2"); }
+@font-face { font-family: Haffer; font-weight: 670; font-display: swap; src: url("/sunitajesh/fonts/HafferSemiBold.woff2") format("woff2"); }
+@font-face { font-family: Haffer; font-weight: 790; font-display: swap; src: url("/sunitajesh/fonts/HafferBold.woff2") format("woff2"); }
+@font-face { font-family: Haffer; font-weight: 900; font-display: swap; src: url("/sunitajesh/fonts/HafferHeavy.woff2") format("woff2"); }
+
+@theme {
+  --color-darkgrey: #0e0e0e;
+  /* Deep brand blue: used for full-bleed surfaces (preloader, banner, button fills).
+     White on it is 9.59:1 — well clear of AA. */
+  --color-primary: #203E96;
+  /* Same hue, brightened, for accents sitting ON the #0e0e0e background.
+     #203E96 there is only 2.01:1; this is 5.06:1 and passes AA for text. */
+  --color-accent: #4C7DF0;
+  --color-black: #000;
+  /* "white" is really the INK token and "darkgrey" the SURFACE token; the light
+     theme below swaps both, which flips every text-white/xx and bg-darkgrey on
+     the page (Tailwind v4 resolves alpha modifiers through color-mix on these
+     same vars, so the tints follow automatically). */
+  --color-white: #fff;
+  /* never flips: text that sits ON the blue primary must stay white in both themes */
+  --color-onprimary: #ffffff;
+  --font-haffer: Haffer, sans-serif;
+}
+
+/* ---- Light theme ----------------------------------------------------------
+   Surface 17.67:1 against ink. The accent becomes the brand blue #203E96,
+   which reads 9.02:1 on this surface (the dark-theme #4C7DF0 would only be
+   3.59:1 here and would fail AA).                                            */
+[data-theme="light"] {
+  --color-darkgrey: #f7f8fa;
+  --color-white: #0f1216;
+  --color-accent: #203E96;
+}
+
+/* Colour-only crossfade while switching. The class is added for the duration of
+   the swap and then removed, so it never interferes with hover/scroll motion. */
+.theme-anim, .theme-anim *, .theme-anim *::before, .theme-anim *::after {
+  transition: background-color 0.45s ease, color 0.45s ease,
+              border-color 0.45s ease, fill 0.45s ease, stroke 0.45s ease !important;
+}
+
+/* ---- Light-theme hero -------------------------------------------------------
+   A dark-page bloom and a light-page bloom are not the same object. On near-black
+   a blurred glow reads as light coming out of darkness; the identical values on
+   white read as a stain, because you are darkening the page rather than lighting
+   it. So the light theme rebuilds the field rather than re-tinting it:
+
+     placement  colour moves into the empty top-right and right edge, so it frames
+                the headline instead of sitting behind it and muddying the type
+     colour     lighter but far more saturated (periwinkle / lavender / sky) —
+                deep navy at low alpha is what was going grey
+     warmth     one soft rose field, because an all-blue wash reads flat on white
+     softness   bigger blur radii, so the fields blend instead of reading as blobs  */
+[data-theme="light"] .hero-glow { opacity: 1; }
+
+[data-theme="light"] .glow-a {          /* azure — the big one, into the empty top-right */
+  width: 980px !important; height: 760px !important;
+  top: -200px !important; left: 52% !important;
+  background: radial-gradient(ellipse at 45% 45%, rgba(96,140,255,0.44) 0%, rgba(120,160,255,0.20) 38%, transparent 68%) !important;
+  filter: blur(88px) !important;
+}
+[data-theme="light"] .glow-b {          /* lavender — mostly off-canvas, only a hint bleeds in */
+  width: 720px !important; height: 600px !important;
+  top: -320px !important; left: -220px !important;
+  background: radial-gradient(ellipse at 55% 50%, rgba(172,152,250,0.36) 0%, rgba(190,175,255,0.16) 45%, transparent 70%) !important;
+  filter: blur(92px) !important;
+}
+[data-theme="light"] .glow-c {          /* sky — right edge, level with the paragraph */
+  width: 640px !important; height: 520px !important;
+  top: 240px !important; left: 70% !important;
+  background: radial-gradient(ellipse at 50% 50%, rgba(105,195,240,0.34) 0%, rgba(140,210,245,0.14) 48%, transparent 72%) !important;
+  filter: blur(80px) !important;
+}
+[data-theme="light"] .glow-d {          /* rose — the warm counterpoint, far right */
+  width: 480px !important; height: 400px !important;
+  top: 380px !important; left: 76% !important;
+  background: radial-gradient(ellipse at 50% 50%, rgba(255,168,182,0.28) 0%, transparent 68%) !important;
+  filter: blur(76px) !important;
+}
+
+/* The dark theme fades to black to build depth. Doing the same to the surface
+   colour here just bleaches the field, which is what flattened it — so the
+   light scrims are cut right back and only steady the bottom strip. */
+[data-theme="light"] .hero-scrim-fade {
+  background: linear-gradient(to bottom, transparent 0%, transparent 62%, rgba(247,248,250,0.30) 84%, rgba(247,248,250,0.72) 100%) !important;
+}
+[data-theme="light"] .hero-scrim-vignette {
+  background: radial-gradient(ellipse at 50% 40%, transparent 62%, rgba(247,248,250,0.22) 100%) !important;
+}
+
+[data-theme="light"] .footer-blob-a {
+  background: radial-gradient(ellipse, rgba(32,62,150,0.24) 0%, transparent 70%) !important;
+}
+[data-theme="light"] .footer-blob-b {
+  background: radial-gradient(ellipse, rgba(28,56,140,0.18) 0%, transparent 68%) !important;
+}
+
+/* the footer card ships an inline dark gradient, so it needs an explicit light bed */
+[data-theme="light"] .footer-card {
+  background:
+    radial-gradient(ellipse 90% 55% at 88% -5%, rgba(32,62,150,0.20) 0%, transparent 62%),
+    radial-gradient(ellipse 65% 65% at 8% 95%, rgba(28,56,140,0.14) 0%, transparent 62%),
+    #e4e8ef !important;
+}
+[data-theme="light"] .footer-noise { opacity: 0.25; }
+
+/* ---- Lenis smooth scroll ---- */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: clip; }
+.lenis.lenis-smooth iframe { pointer-events: none; }
+
+/* clip the X axis only — `overflow: clip` would also clip Y and
+   block native touch scrolling on mobile */
+html { overflow-x: clip; }
+
+body {
+  background: var(--color-darkgrey);
+  color: var(--color-white);
+  font-family: var(--font-haffer);
+  overflow-x: clip;
+}
+
+::selection { background: var(--color-primary); color: var(--color-onprimary); }
+
+/* marquee loop used by the ticker + logo rows */
+@keyframes marquee-x {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+
+/* ---- Light-theme legibility -------------------------------------------------
+   The two-token flip turns every `white/xx` tint into an ink tint. But ink at
+   30% on a light page is far fainter than white at 30% on a dark one, so the
+   muted copy, hairlines and ghost numerals all wash out. These lift each tint
+   to its light-theme equivalent so the hierarchy reads the same in both.      */
+[data-theme="light"] .text-white\/15 { color: color-mix(in oklab, var(--color-white) 40%, transparent); }
+[data-theme="light"] .text-white\/18 { color: color-mix(in oklab, var(--color-white) 42%, transparent); }
+[data-theme="light"] .text-white\/20 { color: color-mix(in oklab, var(--color-white) 45%, transparent); }
+[data-theme="light"] .text-white\/25 { color: color-mix(in oklab, var(--color-white) 50%, transparent); }
+[data-theme="light"] .text-white\/30 { color: color-mix(in oklab, var(--color-white) 55%, transparent); }
+[data-theme="light"] .text-white\/35 { color: color-mix(in oklab, var(--color-white) 58%, transparent); }
+[data-theme="light"] .text-white\/40 { color: color-mix(in oklab, var(--color-white) 62%, transparent); }
+[data-theme="light"] .text-white\/50 { color: color-mix(in oklab, var(--color-white) 68%, transparent); }
+[data-theme="light"] .text-white\/55 { color: color-mix(in oklab, var(--color-white) 70%, transparent); }
+[data-theme="light"] .text-white\/60 { color: color-mix(in oklab, var(--color-white) 74%, transparent); }
+[data-theme="light"] .text-white\/\[0\.07\] { color: color-mix(in oklab, var(--color-white) 14%, transparent); }
+[data-theme="light"] .text-white\/\[0\.09\] { color: color-mix(in oklab, var(--color-white) 16%, transparent); }
+[data-theme="light"] .text-white\/\[0\.12\] { color: color-mix(in oklab, var(--color-white) 20%, transparent); }
+[data-theme="light"] .border-white\/8 { border-color: color-mix(in oklab, var(--color-white) 14%, transparent); }
+[data-theme="light"] .border-white\/10 { border-color: color-mix(in oklab, var(--color-white) 16%, transparent); }
+[data-theme="light"] .border-white\/25 { border-color: color-mix(in oklab, var(--color-white) 40%, transparent); }
+[data-theme="light"] .border-white\/30 { border-color: color-mix(in oklab, var(--color-white) 45%, transparent); }
+[data-theme="light"] .border-white\/\[0\.06\] { border-color: color-mix(in oklab, var(--color-white) 12%, transparent); }
+[data-theme="light"] .border-white\/\[0\.07\] { border-color: color-mix(in oklab, var(--color-white) 13%, transparent); }
+[data-theme="light"] .border-white\/\[0\.08\] { border-color: color-mix(in oklab, var(--color-white) 14%, transparent); }
+[data-theme="light"] .border-white\/\[0\.12\] { border-color: color-mix(in oklab, var(--color-white) 18%, transparent); }
+[data-theme="light"] .bg-white\/5 { background-color: color-mix(in oklab, var(--color-white) 6%, transparent); }
+[data-theme="light"] .bg-white\/8 { background-color: color-mix(in oklab, var(--color-white) 10%, transparent); }
+[data-theme="light"] .bg-white\/20 { background-color: color-mix(in oklab, var(--color-white) 25%, transparent); }
+[data-theme="light"] .bg-white\/\[0\.06\] { background-color: color-mix(in oklab, var(--color-white) 8%, transparent); }
+[data-theme="light"] .bg-white\/\[0\.08\] { background-color: color-mix(in oklab, var(--color-white) 10%, transparent); }
+
+/* The FOOTER logo has no blend mode, so it flips with the theme. (The nav logo is
+   deliberately not using this: it stays white and lets mix-blend-difference invert it.) */
+.logo-flip { filter: brightness(0) invert(1); }
+[data-theme="light"] .logo-flip { filter: brightness(0); }
+
+/* the gallery mask is a solid #0e0e0e blob — a dark-page device, so it gets a
+   light-surface equivalent. (The hero scrims are handled in the hero block above.) */
+[data-theme="light"] .gallery-mask {
+  background: radial-gradient(ellipse at 15% 15%, rgba(247,248,250,1) 0%, rgba(247,248,250,1) 30%, rgba(247,248,250,0.96) 45%, rgba(247,248,250,0.65) 60%, rgba(247,248,250,0.20) 75%, transparent 88%) !important;
+}
+
+/* focus ring: the default blue ring is inverted to orange by the nav's
+   mix-blend-difference, so define an explicit one */
+:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; border-radius: 2px; }
+nav :focus-visible { outline-color: var(--color-white); }
+
+/* ---- Footer, light theme -----------------------------------------------------
+   The footer card bed (#e4e8ef) is darker than the page (#f7f8fa), so the tints
+   that read fine elsewhere go muddy here. Body copy, links and contact details
+   are pushed to near-black; the small uppercase column labels stay a step back
+   so the hierarchy survives.                                                   */
+[data-theme="light"] .footer-card .text-white\/30,
+[data-theme="light"] .footer-card .text-white\/35,
+[data-theme="light"] .footer-card .text-white\/40,
+[data-theme="light"] .footer-card .text-white\/50,
+[data-theme="light"] .footer-card .text-white\/55,
+[data-theme="light"] .footer-card .text-white\/60 {
+  color: color-mix(in oklab, var(--color-white) 90%, transparent);
+}
+[data-theme="light"] .footer-card .text-white\/18,
+[data-theme="light"] .footer-card .text-white\/20,
+[data-theme="light"] .footer-card .text-white\/25 {
+  color: color-mix(in oklab, var(--color-white) 68%, transparent);
+}
+/* placeholder + input text in the newsletter field */
+[data-theme="light"] .footer-card input { color: var(--color-white); }
+[data-theme="light"] .footer-card input::placeholder {
+  color: color-mix(in oklab, var(--color-white) 45%, transparent);
+}
+
+/* ---- Mobile performance ------------------------------------------------------
+   The decorative blooms use very large blur radii (up to 78px) across big boxes.
+   That is cheap on a desktop GPU and expensive on a phone, where it shows up as
+   scroll jank. Halve the radii below the md breakpoint — at that size the visual
+   difference is negligible — and give each one its own layer so scrolling does
+   not force a re-raster.                                                       */
+@media (max-width: 767px) {
+  .glow-a, .glow-b, .glow-c, .glow-d { filter: blur(20px) !important; }
+  .footer-blob-a, .footer-blob-b { filter: blur(28px) !important; }
+  .gallery-mask { filter: blur(22px) !important; }
+}
+.glow-a, .glow-b, .glow-c, .glow-d,
+.footer-blob-a, .footer-blob-b, .gallery-mask {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* The gallery rows are translated on every scroll frame. Without a layer of their
+   own the browser repaints each row — and the images inside it — per frame, which
+   is what makes the section stutter on a phone. Promoted, the same movement is a
+   compositor transform and costs nothing per frame. */
+.parallax-row {
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* ---- Hero: aurora drift + pointer parallax ----------------------------------
+   Two independent layers of motion, kept on separate elements so their
+   transforms never fight:
+     .hero-glow-*  the wrapper, offset by the cursor (CSS vars from the hook)
+     .glow-*       the bloom itself, drifting on its own endless loop
+   Durations are deliberately coprime-ish (19/23/29/31s) so the four blooms
+   never line up and the field never looks like it is repeating.             */
+
+.hero-glow-near,
+.hero-glow-far {
+  transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+.hero-glow-near {
+  transform: translate3d(calc(var(--mx, 0) * 46px), calc(var(--my, 0) * 34px), 0);
+}
+.hero-glow-far {
+  transform: translate3d(calc(var(--mx, 0) * -26px), calc(var(--my, 0) * -18px), 0);
+}
+
+@keyframes drift-a {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  30%      { transform: translate3d(3.5%, -4%, 0) scale(1.09); }
+  62%      { transform: translate3d(-2.5%, 3%, 0) scale(0.94); }
+}
+@keyframes drift-b {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1.02); }
+  40%      { transform: translate3d(-4.5%, 3.5%, 0) scale(0.92); }
+  72%      { transform: translate3d(3%, 2%, 0) scale(1.1); }
+}
+@keyframes drift-c {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(0.98); }
+  35%      { transform: translate3d(-5%, -3%, 0) scale(1.12); }
+  70%      { transform: translate3d(4%, 3.5%, 0) scale(0.95); }
+}
+@keyframes drift-d {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  45%      { transform: translate3d(6%, 4%, 0) scale(1.15); }
+  75%      { transform: translate3d(-3%, -4.5%, 0) scale(0.9); }
+}
+
+.glow-a { animation: drift-a 19s ease-in-out infinite; }
+.glow-b { animation: drift-b 23s ease-in-out infinite; }
+.glow-c { animation: drift-c 29s ease-in-out infinite; }
+.glow-d { animation: drift-d 31s ease-in-out infinite; }
+
+/* Phones get translate-only drift.
+   A composited layer can be moved for free, but changing its scale forces the
+   browser to re-rasterise it — and these layers are large (the biggest is 820x620)
+   and carry a blur, so re-rasterising four of them every frame is what made the
+   hero stutter on a phone while staying smooth on a desktop GPU. Same paths, same
+   sizes, same positions; only the scale pulse is dropped. */
+@keyframes drift-a-flat {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  30%      { transform: translate3d(3.5%, -4%, 0); }
+  62%      { transform: translate3d(-2.5%, 3%, 0); }
+}
+@keyframes drift-b-flat {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  40%      { transform: translate3d(-4.5%, 3.5%, 0); }
+  72%      { transform: translate3d(3%, 2%, 0); }
+}
+@keyframes drift-c-flat {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  35%      { transform: translate3d(-5%, -3%, 0); }
+  68%      { transform: translate3d(4%, 2.5%, 0); }
+}
+@keyframes drift-d-flat {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  45%      { transform: translate3d(4%, 3%, 0); }
+  75%      { transform: translate3d(-3%, -2.5%, 0); }
+}
+
+@media (max-width: 767px) {
+  .glow-a { animation-name: drift-a-flat; animation-duration: 28s; }
+  .glow-b { animation-name: drift-b-flat; animation-duration: 34s; }
+  .glow-c { animation-name: drift-c-flat; animation-duration: 41s; }
+  .glow-d { animation-name: drift-d-flat; animation-duration: 45s; }
+
+  /* the pointer parallax is disabled on coarse pointers, so these two wrappers
+     hold a compositor layer and a transition that nothing ever drives */
+  .hero-glow-near, .hero-glow-far {
+    transform: none;
+    transition: none;
+    will-change: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glow-a, .glow-b, .glow-c, .glow-d { animation: none; }
+  .hero-glow-near, .hero-glow-far { transform: none; transition: none; }
+}
+
+
+/* the Spline stage fades up once its custom element has painted */
+@keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+
+/* Fill the box exactly. Do NOT scale this down to "fix" a cropped model — Spline
+   crops at the canvas edge during render, so a transform only shrinks an already
+   cropped image and costs resolution. Framing belongs to the camera in Spline. */
+spline-viewer {
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* Spline's orbit controls bind wheel and touch on the canvas, so scrolling
+     over the model zooms the camera instead of scrolling the page — badly
+     broken on a phone, where the model spans the viewport. The scene autoplays
+     on its own, so nothing is lost by making it inert to input. */
+  pointer-events: none;
+  touch-action: pan-y;
+}
